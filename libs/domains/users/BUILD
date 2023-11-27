@@ -1,0 +1,9 @@
+python_sources(
+    name="users_domains",
+    sources=[
+        "**"
+    ],
+    dependencies=[
+        "libs/utils/db:connection"
+    ]
+)

@@ -1,0 +1,9 @@
+python_sources(
+    name="posts_domains",
+    sources=[
+        "**"
+    ],
+    dependencies=[
+        "libs/utils/db:connection"
+    ]
+)
