@@ -1,0 +1,29 @@
+2024-01-15 14:12:48,182 - SERVER - collector | INFO | FACEBOOK - PUT ~ http://localhost:3000/download/fail, request_data: id='5f9f9bcde6ccb0b6f3e8f450' oid='5f9f9bcde6ccb0b6f3e8f450' queue_time='2020-10-13T10:07:01.522989'
+2024-01-15 14:12:48,182 - SERVER - collector | CRITICAL | QUEUE - id='5f9f9bcde6ccb0b6f3e8f450' oid='5f9f9bcde6ccb0b6f3e8f450' queue_time='2020-10-13T10:07:01.522989'
+Traceback (most recent call last):
+  File "/home/jay/projects/Kinetiq/KINETIQ/libs/util/queues/src/collection_queue.py", line 28, in remove_item
+    return self.document.remove(request_data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: FacebookDownloadFailReqBody(id='5f9f9bcde6ccb0b6f3e8f450', oid='5f9f9bcde6ccb0b6f3e8f450', queue_time='2020-10-13T10:07:01.522989') is not in deque
+2024-01-15 14:16:30,039 - SERVER - collector | INFO | FACEBOOK - PUT ~ http://localhost:3000/download/fail, request_data: id='5f9f9bcde6ccb0b6f3e8f450' oid='5f9f9bcde6ccb0b6f3e8f450' queue_time='2020-10-13T10:07:01.522989'
+2024-01-15 14:16:30,039 - SERVER - collector | CRITICAL | QUEUE - id='5f9f9bcde6ccb0b6f3e8f450' oid='5f9f9bcde6ccb0b6f3e8f450' queue_time='2020-10-13T10:07:01.522989'
+Traceback (most recent call last):
+  File "/home/jay/projects/Kinetiq/KINETIQ/libs/util/queues/src/collection_queue.py", line 28, in remove_item
+    return self.document.remove(request_data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: FacebookDownloadFailReqBody(id='5f9f9bcde6ccb0b6f3e8f450', oid='5f9f9bcde6ccb0b6f3e8f450', queue_time='2020-10-13T10:07:01.522989') is not in deque
+2024-01-15 14:16:46,882 - SERVER - collector | INFO | FACEBOOK - PUT ~ http://localhost:3000/download/fail, request_data: id='5f9f9bcde6ccb0b6f3e8f450' oid='5f9f9bcde6ccb0b6f3e8f450' queue_time='2020-10-13T10:07:01.522989'
+2024-01-15 14:16:46,882 - SERVER - collector | CRITICAL | QUEUE - id='5f9f9bcde6ccb0b6f3e8f450' oid='5f9f9bcde6ccb0b6f3e8f450' queue_time='2020-10-13T10:07:01.522989'
+Traceback (most recent call last):
+  File "/home/jay/projects/Kinetiq/KINETIQ/libs/util/queues/src/collection_queue.py", line 28, in remove_item
+    return self.document.remove(request_data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: FacebookDownloadFailReqBody(id='5f9f9bcde6ccb0b6f3e8f450', oid='5f9f9bcde6ccb0b6f3e8f450', queue_time='2020-10-13T10:07:01.522989') is not in deque
+2024-01-15 14:17:23,426 - SERVER - collector | INFO | FACEBOOK - PUT ~ http://localhost:3000/download/fail, request_data: id='5f9f9bcde6ccb0b6f3e8f450' oid='5f9f9bcde6ccb0b6f3e8f450' queue_time='2020-10-13T10:07:01.522989'
+2024-01-15 14:17:23,427 - SERVER - collector | CRITICAL | QUEUE - id='5f9f9bcde6ccb0b6f3e8f450' oid='5f9f9bcde6ccb0b6f3e8f450' queue_time='2020-10-13T10:07:01.522989'
+Traceback (most recent call last):
+  File "/home/jay/projects/Kinetiq/KINETIQ/libs/util/queues/src/collection_queue.py", line 28, in remove_item
+    return self.document.remove(request_data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: FacebookDownloadFailReqBody(id='5f9f9bcde6ccb0b6f3e8f450', oid='5f9f9bcde6ccb0b6f3e8f450', queue_time='2020-10-13T10:07:01.522989') is not in deque
+2024-01-16 11:25:37,377 - SERVER - collector | INFO | FACEBOOK - GET ~ http://127.0.0.1:3000/instagram/report

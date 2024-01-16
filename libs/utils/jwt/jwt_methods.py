@@ -1,6 +1,6 @@
 from bson.objectid import ObjectId
-from libs.domains.auth.enums import Role
-from libs.domains.auth.repository import auth_repository
+from libs.domains.auth.src.enums import Role
+from libs.domains.auth.src.repository import auth_repository
 
 
 def check_token_validation(jwt_header, jwt_payload):
