@@ -1,23 +1,27 @@
+python_requirement(
+    name = 'app_requirements',
+    requirements = [
+        'uvicorn'
+    ]
+)
+
 python_sources(
-    name = "main_app",
+    name = 'app_config',
     sources = [
-        "app.py",
-        "config.py"
-    ],
-    dependencies = [
-        "apps/auth:auth_app",
-        "apps/platform:platform_app"
+        'config.py'
     ]
 )
 
 file(name='env', source='.env')
 
 pex_binary(
-    name = "main",
+    name = 'app',
     dependencies = [
-        ":main_app",
-        ":env"
+        ':app_config',
+        ':app_requirements',
+        'apps/auth:auth_app',
+        'apps/platform:platform_app'
     ],
-    entry_point = "app.py",
-    output_path = "apps/main.pex"
+    entry_point = 'app.py',
+    output_path = 'apps/main.pex'
 )

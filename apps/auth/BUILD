@@ -1,22 +1,19 @@
-python_sources(
-    name = "auth_app",
-    sources = [
-        "modules/**",
-        "app.py",
-        "config.py",
-    ],
-    dependencies = [
-        "apps/platform:platform_requirements",
-        "libs/domains/auth:auth_domains",
-        "libs/utils/jwt:jwt_config",
+python_requirement(
+    name = 'auth_requirements',
+    requirements = [
+        'passlib',
+        'pydantic[email]'
     ]
 )
 
-pex_binary(
-    name = "main",
-    dependencies = [
-        ":auth_app",
+python_sources(
+    name = 'auth_app',
+    sources = [
+        'src/**'
     ],
-    entry_point = "app.py",
-    output_path = "auth/main.pex"
+    dependencies = [
+        'apps/auth:auth_requirements',
+        'libs/domains/auth:auth_domain',
+        'libs/utils/jwt:jwt_util',
+    ]
 )

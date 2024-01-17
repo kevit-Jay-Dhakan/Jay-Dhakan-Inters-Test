@@ -1,5 +1,5 @@
 from libs.domains.users.src.collection import users_collection
-from libs.util.db.mongoose.src import BaseRepository
+from libs.utils.db.mongoose.src.base_repository import BaseRepository
 
 
 class UsersRepository(BaseRepository):

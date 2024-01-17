@@ -6,7 +6,8 @@ from apps.platform.src.modules.posts.dto import (
     UpdatePostReqBody
 )
 from libs.domains.posts.src.repository import posts_repository
-from libs.util.jwt.src import jwt_helpers
+from libs.utils.jwt.src.helpers import jwt_helpers
+from libs.utils.logger.src import logger
 
 
 class PostsService:
@@ -74,6 +75,10 @@ class PostsService:
                     'postDescription': post_description
                 }
             )
+            logger.debug(
+                f'User with userOid: {current_user_oid} created one post.',
+                send_in_ms_teams=True
+            )
             return {'message': f'Post created successfully.'}
         except Exception as err:
             raise HTTPException(
@@ -114,6 +119,10 @@ class PostsService:
             post_exists = posts_repository.find_one({'postId': post_id})
             if post_exists and access_token:
                 posts_repository.delete_one({'postId': post_id})
+                logger.debug(
+                    f'Post with postId: {post_id} was deleted',
+                    send_in_ms_teams=True
+                )
                 return {
                     'message': f'Post with postId: {post_id}, '
                                f'deleted successfully.'

@@ -1,0 +1,19 @@
+python_requirement(
+    name='jwt_requirements',
+    requirements=[
+        'python-jose',
+        'fastapi'
+    ]
+)
+
+python_sources(
+    name='jwt_util',
+    sources=[
+        'src/**'
+    ],
+    dependencies=[
+        ':jwt_requirements',
+        'libs/utils/common:common_utils',
+        'libs/domains/auth:auth_domain'
+    ]
+)

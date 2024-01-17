@@ -7,3 +7,4 @@ pydantic~=2.5.3
 python-jose
 pydantic[email]
 pytz~=2023.3.post1
+pymsteams~=0.2.2

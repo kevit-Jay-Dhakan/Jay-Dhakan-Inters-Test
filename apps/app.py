@@ -2,16 +2,16 @@ import uvicorn
 from fastapi import FastAPI
 
 from apps.app_config import ENVIRONMENT, HOST, PORT
-from apps.auth.src import auth_route
-from apps.platform.src.modules.posts import posts_route
-from apps.platform.src.modules.users import users_route
-from libs.util.common.src.modules.environments import is_internal_environment
+from apps.auth.src.route import auth_route
+from apps.platform.src.modules.posts.route import posts_route
+from apps.platform.src.modules.users.route import users_route
+from libs.utils.common.src.modules.environments import is_internal_environment
 
 is_internal_env = is_internal_environment(ENVIRONMENT)
 
 app = FastAPI(
-    title='Application: AUTH',
-    version='0.0.1',
+    title='Application: MAIN',
+    version='0.0.2',
     docs_url='/docs' if is_internal_env else None,
     redoc_url='/redoc' if is_internal_env else None,
 )

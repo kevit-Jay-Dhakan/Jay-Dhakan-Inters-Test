@@ -1,9 +1,9 @@
 python_sources(
-    name="users_domains",
+    name='users_domain',
     sources=[
-        "**"
+        'src/**'
     ],
     dependencies=[
-        "libs/utils/db:connection"
+        'libs/utils/db/mongoose:mongoose_db'
     ]
 )

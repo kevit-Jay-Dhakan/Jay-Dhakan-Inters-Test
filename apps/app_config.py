@@ -1,7 +1,7 @@
 from os import path
 
 from dotenv import dotenv_values
-from libs.util.common.src.modules.environments import Environment
+from libs.utils.common.src.modules.environments import Environment
 
 env_path = '.env'
 

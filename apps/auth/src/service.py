@@ -4,7 +4,7 @@ from passlib.hash import pbkdf2_sha256
 
 from apps.auth.src.dto import UserLoginReqBody
 from libs.domains.auth.src.repository import auth_repository
-from libs.util.jwt.src import jwt_helpers
+from libs.utils.jwt.src.helpers import jwt_helpers
 
 
 class AuthService:
@@ -47,7 +47,7 @@ class AuthService:
         except Exception as err:
             raise HTTPException(
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Error message: {str(err)}"
+                detail=f'Error message: {str(err)}'
             )
 
 

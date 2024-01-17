@@ -5,10 +5,11 @@ from passlib.handlers.pbkdf2 import pbkdf2_sha256
 from apps.platform.src.modules.users.dto import (
     RegisterUserReqBody, UpdateUserReqBody
 )
-from libs.domains.posts.src import posts_repository
-from libs.domains.users.src import users_repository
-from libs.util.common.src.modules.enums import Role
-from libs.util.jwt.src import jwt_helpers
+from libs.domains.posts.src.repository import posts_repository
+from libs.domains.users.src.repository import users_repository
+from libs.utils.common.src.modules.enums import Role
+from libs.utils.jwt.src.helpers import jwt_helpers
+from libs.utils.logger.src import logger
 
 
 class UsersService:
@@ -23,10 +24,10 @@ class UsersService:
 
             users_data = list(users_repository.find({}))
             for user in users_data:
-                user["_id"] = str(user["_id"])
+                user['_id'] = str(user['_id'])
             return {'users': users_data}
         except Exception as e:
-            return {"message": f"Error message: {str(e)}"}
+            return {'message': f'Error message: {str(e)}'}
 
     @staticmethod
     def find_user(user_id: str):
@@ -35,11 +36,11 @@ class UsersService:
                 {'_id': ObjectId(user_id)}, {'password': 0}
             )
             user['_id'] = str(user['_id'])
-            return {"user": user}
+            return {'user': user}
         except Exception as err:
             raise HTTPException(
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Error message: {str(err)}"
+                detail=f'Error message: {str(err)}'
             )
 
     @staticmethod
@@ -80,11 +81,11 @@ class UsersService:
 
             if update_user_data.model_dump() == {}:
                 return HTTPException(
-                    201, "Looks like you changed your mind to update"
+                    201, 'Looks like you changed your mind to update'
                 )
 
             user = users_repository.find_one(
-                {"_id": ObjectId(current_user_oid)}
+                {'_id': ObjectId(current_user_oid)}
             )
             first_name = user['firstName'] if (
                 update_user_data.firstName is None) else (
@@ -97,22 +98,24 @@ class UsersService:
                 pbkdf2_sha256.hash(update_user_data.password))
 
             users_repository.update_one(
-                {"_id": ObjectId(current_user_oid)},
+                {'_id': ObjectId(current_user_oid)},
                 {
-                    "$set": {
-                        "firstName": first_name,
-                        "lastName": last_name,
+                    '$set': {
+                        'firstName': first_name,
+                        'lastName': last_name,
                         'password': password
                     }
                 }
             )
             updated_user = users_repository.find_one(
-                {"_id": ObjectId(current_user_oid)}, {'password': 0}
+                {'_id': ObjectId(current_user_oid)}, {'password': 0}
             )
-            updated_user["_id"] = str(updated_user["_id"])
-
+            updated_user['_id'] = str(updated_user['_id'])
+            logger.debug(
+                f'User {user["firstName"] + user["lastName"]} updated their '
+                f'account details', send_in_ms_teams=True
+            )
             return updated_user
-
         except Exception as err:
             raise HTTPException(
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -125,19 +128,23 @@ class UsersService:
             payload = jwt_helpers.decode_jwt_token(access_token)
             current_user_oid = payload.get('identity')
 
-            user_exists = users_repository.find_one(
-                {"_id": ObjectId(current_user_oid)}
+            user = users_repository.find_one(
+                {'_id': ObjectId(current_user_oid)}
             )
-            if user_exists:
-                users_repository.delete_one({"_id": ObjectId(current_user_oid)})
+            if user:
+                users_repository.delete_one({'_id': ObjectId(current_user_oid)})
                 posts_repository.delete_many(
-                    {"userOid": ObjectId(current_user_oid)}
+                    {'userOid': ObjectId(current_user_oid)}
                 )
-                return {"message": f"User Deleted successfully."}
+                logger.info(
+                    f'User {user['firstName'] + user['lastName']} deleted '
+                    f'their account.', send_in_ms_teams=True
+                )
+                return {'message': f'User Deleted successfully.'}
             else:
                 raise HTTPException(
                     201,
-                    "User does not exist, please login again and try again!!"
+                    'User does not exist, please login again and try again!!'
                 )
         except Exception as err:
             raise HTTPException(

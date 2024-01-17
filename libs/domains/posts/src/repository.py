@@ -1,5 +1,5 @@
 from libs.domains.posts.src.collection import posts_collection
-from libs.util.db.mongoose.src import BaseRepository
+from libs.utils.db.mongoose.src.base_repository import BaseRepository
 
 
 class PostsRepository(BaseRepository):

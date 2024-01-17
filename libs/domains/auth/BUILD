@@ -1,17 +1,10 @@
-python_requirement(
-    name="auth_domain_requirements",
-    requirements=[
-        "flask-jwt-extended"
-    ]
-)
-
 python_sources(
-    name="auth_domains",
+    name='auth_domain',
     sources=[
-        "**"
+        'src/**'
     ],
     dependencies=[
-        ":auth_domain_requirements",
-        "libs/utils/db:connection"
+        'libs/utils/db/mongoose:mongoose_db',
+        'libs/domains/users:users_domain'
     ]
 )

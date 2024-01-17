@@ -2,17 +2,16 @@ from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordBearer
 
 from apps.platform.src.modules.posts.dto import (
-    NewPostReqBody,
-    UpdatePostReqBody
+    NewPostReqBody, UpdatePostReqBody
 )
 from apps.platform.src.modules.posts.service import posts_service
-from libs.util.jwt.src import jwt_helpers
+from libs.utils.jwt.src.helpers import jwt_helpers
 
 posts_route = APIRouter(prefix='/posts', tags=['Posts'])
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
 
 
-@posts_route.get("/get_post/{post_id}")
+@posts_route.get('/get_post/{post_id}')
 def get_post(
     post_id: str, access_token: str = Depends(jwt_helpers.is_token_valid)
 ):
@@ -20,13 +19,13 @@ def get_post(
     return post, 200
 
 
-@posts_route.get("/get_all_posts")
+@posts_route.get('/get_all_posts')
 def get_posts(access_token: str = Depends(jwt_helpers.is_token_valid)):
     posts = posts_service.find_posts(access_token)
     return posts, 200
 
 
-@posts_route.post("/create_post")
+@posts_route.post('/create_post')
 def create_post(
     new_post_data: NewPostReqBody,
     access_token: str = Depends(jwt_helpers.is_token_valid)
@@ -35,7 +34,7 @@ def create_post(
     return created_post, 200
 
 
-@posts_route.post("/update_post/{post_id}")
+@posts_route.post('/update_post/{post_id}')
 def update_post(
     post_id: str, update_post_data: UpdatePostReqBody,
     access_token: str = Depends(jwt_helpers.is_token_valid)
@@ -46,7 +45,7 @@ def update_post(
     return updated_post, 200
 
 
-@posts_route.delete("/delete_post/{post_id}")
+@posts_route.delete('/delete_post/{post_id}')
 def delete_post(
     post_id: str, access_token: str = Depends(jwt_helpers.is_token_valid)
 ):

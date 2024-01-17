@@ -1,34 +1,22 @@
 python_requirement(
-    name = "platform_requirements",
+    name = 'platform_requirements',
     requirements = [
-        "PyJwt",
-        "marshmallow",
-        "passlib",
-        "datetime",
-        "requests"
+        'pydantic',
+        'pydantic[email]'
     ]
 )
 
 python_sources(
-    name = "platform_app",
+    name = 'platform_app',
     sources = [
-        "modules/**",
-        "app.py",
-        "config.py"
+        'modules/**'
     ],
     dependencies = [
-        ":platform_requirements",
-        "libs/utils/jwt:jwt_config",
-        "libs/domains/posts:posts_domains",
-        "libs/domains/auth:auth_domains",
+        ':platform_requirements',
+        'libs/utils/jwt:jwt_util',
+        'libs/utils/logger:logger_util',
+        'libs/utils/common:common_utils',
+        'libs/domains/posts:posts_domain',
+        'libs/domains/auth:users_domain',
     ]
-)
-
-pex_binary(
-    name = "main",
-    dependencies = [
-        ":platform_app",
-    ],
-    entry_point = "app.py",
-    output_path = "platform/main.pex"
 )
