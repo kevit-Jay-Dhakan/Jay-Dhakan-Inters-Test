@@ -1,11 +1,10 @@
-from marshmallow import Schema, fields
+from pydantic import BaseModel
 
 
-class PostSchema(Schema):
-    post_id = fields.Str(
-        required=True, error_messages={"required": "post_id is required"}
-    )
-    post_description = fields.Str(
-        required=True,
-        error_messages={"required": "post_description is required"},
-    )
+class NewPostReqBody(BaseModel):
+    postId: str
+    postDescription: str
+
+
+class UpdatePostReqBody(BaseModel):
+    postDescription: str

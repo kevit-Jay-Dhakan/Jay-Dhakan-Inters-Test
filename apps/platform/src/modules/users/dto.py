@@ -2,11 +2,26 @@ from pydantic import BaseModel, EmailStr, Field
 
 
 class RegisterUserReqBody(BaseModel):
-    user_id: str = Field(
+    userId: str = Field(
         description=''
     )
-    first_name: str
-    last_name: str
+    firstName: str
+    lastName: str
     password: str
     privilege: str
     email: EmailStr
+
+
+class UpdateUserReqBody(BaseModel):
+    firstName: str = Field(
+        description='',
+        default=None
+    )
+    lastName: str = Field(
+        description='',
+        default=None
+    )
+    password: str = Field(
+        description='',
+        default=None
+    )

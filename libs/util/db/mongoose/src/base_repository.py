@@ -53,7 +53,7 @@ class BaseRepository:
 
     def find_one(self, query: dict, projection: dict = None) -> dict:
         if projection is None:
-            projection = {'_id': 1}
+            projection = {}
         return self.collection.find_one(query, projection)
 
     def find(
@@ -61,7 +61,7 @@ class BaseRepository:
         limit: int = 0, sort_key: str = None, sort_type: 1 | -1 = None
     ) -> Cursor[dict]:
         if projection is None:
-            projection = {'_id': 1}
+            projection = {}
         if sort_key is not None:
             self.collection.find(query, projection).sort(sort_key, sort_type)
         return self.collection.find(query, projection).limit(limit)

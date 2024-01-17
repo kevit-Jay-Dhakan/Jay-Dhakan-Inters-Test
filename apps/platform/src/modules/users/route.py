@@ -1,44 +1,44 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
-from apps.platform.src.modules.users.dto import RegisterUserReqBody
+from apps.platform.src.modules.users.dto import (
+    RegisterUserReqBody, UpdateUserReqBody
+)
 from apps.platform.src.modules.users.service import users_service
+from libs.util.jwt.src import jwt_helpers
 
 users_route = APIRouter(prefix='/users', tags=['Users'])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
-@users_route.get("/<string:user_id>")
+@users_route.get("/")
+def get_users(access_token: str = Depends(jwt_helpers.is_token_valid)):
+    users = users_service.find_users(access_token)
+    return users
+
+
+@users_route.get("/{user_id}")
 def get_user(user_id: str):
-    try:
-        user = users_service.find_user(user_id)
-        return {"user data": user}, 200
-    except Exception as e:
-        HTTPException(500, detail=f"Error :: {str(e)}")
+    user = users_service.find_user(user_id)
+    return user, 200
 
 
 @users_route.post("/register_user")
-def register_user(request_data: RegisterUserReqBody):
-    try:
-        inserted_user = users_service.register_user(request_data)
-        return inserted_user, 200
-    except Exception as e:
-        HTTPException(500, detail=f"Error :: {str(e)}")
+def register_user(new_user_data: RegisterUserReqBody):
+    inserted_user = users_service.register_user(new_user_data)
+    return inserted_user, 200
 
 
 @users_route.post("/update_user")
-def update_user(access_token: str = Depends(oauth2_scheme)):
-    try:
-        updated_user = users_service.update_user(access_token)
-        return updated_user, 200
-    except Exception as e:
-        HTTPException(500, detail=f"Error :: {str(e)}")
+def update_user(
+    update_user_data: UpdateUserReqBody,
+    access_token: str = Depends(jwt_helpers.is_token_valid)
+):
+    updated_user = users_service.update_user(access_token, update_user_data)
+    return updated_user, 200
 
 
 @users_route.delete("/delete_user")
-def delete(access_token: str = Depends(oauth2_scheme)):
-    try:
-        deleted_user = users_service.delete_user(access_token)
-        return deleted_user, 201
-    except Exception as e:
-        HTTPException(500, detail=f"Error :: {str(e)}")
+def delete(access_token: str = Depends(jwt_helpers.is_token_valid)):
+    deleted_user = users_service.delete_user(access_token)
+    return deleted_user, 201

@@ -1,122 +1,131 @@
-from datetime import datetime
-
 from bson.objectid import ObjectId
-from flask import request
-from flask_jwt_extended import get_jwt
-from marshmallow import ValidationError
+from fastapi import HTTPException, status
 
-from apps.platform.src.modules.posts.dto import PostSchema
-from libs.domains.posts.repository import posts_repository
-from libs.domains.users.src.repository import users_repository
+from apps.platform.src.modules.posts.dto import (
+    NewPostReqBody,
+    UpdatePostReqBody
+)
+from libs.domains.posts.src.repository import posts_repository
+from libs.util.jwt.src import jwt_helpers
 
 
 class PostsService:
     @staticmethod
-    def find_post(post_id: str):
+    def find_post(post_id: str, access_token: str):
         try:
-            post_data = posts_repository.find_one({"post_id": post_id})
-            post_data["_id"] = str(post_data["_id"])
-
-            return post_data
-        except Exception as e:
-            return {"message": f"Error message: {str(e)}"}
+            post = posts_repository.find_one({'postId': post_id})
+            if post and access_token:
+                post['_id'] = str(post['_id'])
+                post['userOid'] = str(post['userOid'])
+                return {'data': post}
+            raise HTTPException(
+                201, f'postId: {post_id} does not exists.'
+            )
+        except Exception as err:
+            raise HTTPException(
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=str(err)
+            )
 
     @staticmethod
-    def find_posts():
+    def find_posts(access_token: str):
         try:
-            user = get_jwt()["sub"]
-            user = users_repository.find_one({"_id": ObjectId(user)})
-            user_id = user["user_id"]
+            payload = jwt_helpers.decode_jwt_token(access_token)
+            current_user_oid = payload.get('identity')
 
-            posts_data = list(posts_repository.find_many({"user_id": user_id}))
-            for post in posts_data:
-                post["_id"] = str(post["_id"])
-
-            return posts_data
-        except Exception as e:
-            return {"message": f"Error message: {str(e)}"}
+            posts_data = list(
+                posts_repository.find(
+                    {'userOid': ObjectId(current_user_oid)}
+                )
+            )
+            if len(posts_data) > 0:
+                for post in posts_data:
+                    post['_id'] = str(post['_id'])
+                    post['userOid'] = str(post['userOid'])
+                    return {'posts': posts_data}
+            raise HTTPException(
+                201,
+                f'You have not created any posts. userOid: {current_user_oid}'
+            )
+        except Exception as err:
+            raise HTTPException(
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=str(err)
+            )
 
     @staticmethod
-    def insert_post():
-        user = get_jwt()["sub"]
-        user = users_repository.find_one({"_id": ObjectId(user)})
-        user_id = user["user_id"]
-
+    def insert_post(new_post_data: NewPostReqBody, access_token: str):
         try:
-            post_data = request.get_json()
+            payload = jwt_helpers.decode_jwt_token(access_token)
+            current_user_oid = payload.get('identity')
 
-            try:
-                PostSchema().load(post_data)
+            post_id = new_post_data.postId
+            post_description = new_post_data.postDescription
 
-            except ValidationError as e:
-                return {"Validation errors": e.messages}
-
-            post_id = post_data["post_id"]
-            post_description = post_data["post_description"]
-
-            if posts_repository.find_one({"post_id": post_id}):
-                return {"message": f"post_id {post_id} already exists "}
+            if posts_repository.find_one({'postId': post_id}):
+                raise HTTPException(
+                    201, f'postId: {post_id} already exists'
+                )
 
             posts_repository.insert_one(
                 {
-                    "post_id": post_id,
-                    "user_id": user_id,
-                    "post_description": post_description,
-                    "createdAt": datetime.now(),
-                    "updatedAt": datetime.now()
+                    'postId': post_id,
+                    'userOid': ObjectId(current_user_oid),
+                    'postDescription': post_description
                 }
             )
-
-            return {"message": f"Post created successfully."}
-        except Exception as e:
-            return {"message": f"Error message: {str(e)}"}
-
-    @staticmethod
-    def update_post():
-        try:
-            post_data = request.get_json()
-            if post_data == {}:
-                return {"message": "Looks like you changed your mind to update"}
-
-            try:
-                PostSchema().load(post_data)
-
-            except ValidationError as e:
-                return {"Validation errors": e.messages}
-
-            post_id = post_data["post_id"]
-            post_description = post_data["post_description"]
-
-            posts_repository.update_one(
-                {"post_id": post_id},
-                {
-                    "$set": {
-                        "post_description": post_description,
-                        "updatedAt": datetime.now(),
-                    }
-                },
-            )
-            updated_post = posts_repository.find_one({"post_id": post_id})
-            updated_post["_id"] = str(updated_post["_id"])
-
-            return updated_post
+            return {'message': f'Post created successfully.'}
         except Exception as err:
-            return {"message": f"Error :: {str(err)}"}
+            raise HTTPException(
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=str(err)
+            )
 
     @staticmethod
-    def delete_post():
+    def update_post(
+        post_id: str, update_post_data: UpdatePostReqBody, access_token: str
+    ):
         try:
-            post_id = request.get_json()["post_id"]
-            post_exists = posts_repository.find_one({"post_id": post_id})
+            post_description = update_post_data.postDescription
+            post = posts_repository.find_one({'postId': post_id})
+            if post and access_token:
+                posts_repository.update_one(
+                    {'postId': post_id},
+                    {'$set': {'postDescription': post_description}},
+                )
+                updated_post = posts_repository.find_one({'postId': post_id})
+                updated_post['_id'] = str(updated_post['_id'])
+                updated_post['userOid'] = str(updated_post['userOid'])
+                return {
+                    'message': 'Post Updated successfully', 'data': updated_post
+                }, 200
+            raise HTTPException(
+                201, f'postId: {post_id} does not exists.'
+            )
+        except Exception as err:
+            raise HTTPException(
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=str(err)
+            )
 
-            if post_exists is None:
-                return {"message": "Post does not exist, please try again!!"}
-            else:
-                posts_repository.delete_one({"post_id": post_id})
-
-                return {"message": f"Post Deleted successfully."}
-        except Exception as e:
-            return {"message": f"Error message: {str(e)}"}
+    @staticmethod
+    def delete_post(post_id: str, access_token: str):
+        try:
+            post_exists = posts_repository.find_one({'postId': post_id})
+            if post_exists and access_token:
+                posts_repository.delete_one({'postId': post_id})
+                return {
+                    'message': f'Post with postId: {post_id}, '
+                               f'deleted successfully.'
+                }
+            raise HTTPException(
+                201, 'Post does not exist, please try again!!'
+            )
+        except Exception as err:
+            raise HTTPException(
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=str(err)
+            )
 
 
 posts_service = PostsService()

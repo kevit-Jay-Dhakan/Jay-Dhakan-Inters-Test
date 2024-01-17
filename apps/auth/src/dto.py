@@ -2,5 +2,5 @@ from pydantic import BaseModel
 
 
 class UserLoginReqBody(BaseModel):
-    user_id: str
+    userId: str
     password: str
