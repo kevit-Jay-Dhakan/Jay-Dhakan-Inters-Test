@@ -5,7 +5,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 
-from libs.domains.auth.src.repository import auth_repository
+from libs.domains.users.src.repository import users_repository
 from libs.utils.common.src.modules.enums import Role
 from libs.utils.jwt.src.jwt_config import (
     ACCESS_TOKEN_EXPIRE_IN_MINUTES, ALGORITHM, JWT_SECRET_KEY
@@ -17,7 +17,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
 class JwtHelpers:
     @staticmethod
     def add_privilege_claims_to_jwt(user_oid):
-        user = auth_repository.find_one({'_id': ObjectId(user_oid)})
+        user = users_repository.find_one({'_id': ObjectId(user_oid)})
 
         claims = {'is_admin': False, 'is_super_admin': False}
         if user and 'privilege' in user:
@@ -49,7 +49,7 @@ class JwtHelpers:
             payload = self.decode_jwt_token(access_token)
             current_user_id = payload.get('identity')
 
-            user = auth_repository.find_one(
+            user = users_repository.find_one(
                 {
                     '_id': ObjectId(current_user_id),
                     'tokens': {'$elemMatch': {'$eq': access_token}}
