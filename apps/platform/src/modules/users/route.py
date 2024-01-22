@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from fastapi.security import OAuth2PasswordBearer
 
 from apps.platform.src.modules.users.dto import (
@@ -6,13 +6,18 @@ from apps.platform.src.modules.users.dto import (
 )
 from apps.platform.src.modules.users.service import users_service
 from libs.utils.jwt.src.helpers import jwt_helpers
+from libs.utils.limiter.src.helpers import limiter
 
 users_route = APIRouter(prefix='/users', tags=['Users'])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
 
 
 @users_route.get('/')
-def get_users(access_token: str = Depends(jwt_helpers.is_token_valid)):
+@limiter.limit('5/minute')
+def get_users(
+    request: Request,
+    access_token: str = Depends(jwt_helpers.is_token_valid)
+):
     users = users_service.find_users(access_token)
     return users
 

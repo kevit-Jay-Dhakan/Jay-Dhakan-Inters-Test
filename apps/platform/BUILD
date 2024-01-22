@@ -15,8 +15,9 @@ python_sources(
         ':platform_requirements',
         'libs/utils/jwt:jwt_util',
         'libs/utils/logger:logger_util',
+        'libs/utils/limiter:limiter_util',
         'libs/utils/common:common_utils',
         'libs/domains/posts:posts_domain',
-        'libs/domains/auth:users_domain',
+        'libs/domains/auth:users_domain'
     ]
 )
